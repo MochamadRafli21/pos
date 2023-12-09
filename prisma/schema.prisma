@@ -1,0 +1,42 @@
+// schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+model Item {
+  id           String         @id @default(cuid())
+  name         String
+  price        Int
+  stock        Int
+  item_history StockHistory[]
+}
+
+model StockHistory {
+  id     String   @id @default(cuid())
+  Item   Item     @relation(fields: [itemId], references: [id])
+  change Int
+  date   DateTime
+  itemId String
+}
+
+model OrderItem {
+  id       String @id @default(cuid())
+  name     String
+  price    Int
+  quantity Int
+  order    Order  @relation(fields: [orderId], references: [id])
+  orderId  String
+}
+
+model Order {
+  id          String      @id @default(cuid())
+  name        String
+  order_items OrderItem[]
+  total       Int
+}
