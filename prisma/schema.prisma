@@ -12,9 +12,11 @@ datasource db {
 model Item {
   id           String         @id @default(cuid())
   name         String
-  price        Int
-  stock        Int
+  description  String
+  price        Int @default(0)
+  stock        Int @default(0)
   item_history StockHistory[]
+  is_deleted    Boolean @default(false)
 }
 
 model StockHistory {
@@ -36,7 +38,9 @@ model OrderItem {
 
 model Order {
   id          String      @id @default(cuid())
-  name        String
+  unique_id   String
   order_items OrderItem[]
+  discount    Int
   total       Int
+  date        DateTime
 }
