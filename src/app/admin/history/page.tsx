@@ -1,5 +1,6 @@
 import Link from 'next/link'
-
+import DeleteOrder from '@/components/Modal/deleteOrder';
+import { getOrderData } from '@/app/api/order/route';
 type Order = {
   id: string
   unique_id: string
@@ -9,12 +10,15 @@ type Order = {
 export default async function History() {
   async function getOrder() {
   try{
-    const res = await fetch(process.env.NEXT_PUBLIC_HOST_URL + '/api/order')
-    if (!res.ok) {
-    throw new Error('Failed to fetch data');
-    }
-    const item = await res.json()
-    return item.data
+    const res = await getOrderData('')
+    const items = res.map((item) => {
+      return {
+        id: item.id,
+        unique_id: item.unique_id,
+        date: item.date.toDateString()
+      }
+    })
+    return items
   }catch(error){
     console.log(error)
   }
@@ -40,7 +44,7 @@ export default async function History() {
     <div className='flex justify-between md:grid grid-cols-2'>
     <h4 className="font-bold text-xl text-orange-400 mb-2">Transactions ID</h4>
     </div>
-    {orders.map((order: Order) => (
+    {orders ? orders.map((order: Order) => (
     <div className="w-full p-4 bg-white rounded-xl mb-4" key={order.id}>
     <div className="grid grid-cols-2">
     <div>
@@ -50,14 +54,13 @@ export default async function History() {
     </Link>
     </div>
     <div className='w-full flex justify-end'>
-    <button className='bg-red-400 w-fit rounded-xl px-4 py-2 text-white'>
-      Delete
-    </button>
-
+      <DeleteOrder id={order.id} />
     </div>
     </div>
     </div>
-    ))}
+    ))
+    :<></>
+    }
     </div>
     </main>
   )

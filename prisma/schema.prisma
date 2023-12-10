@@ -41,7 +41,8 @@ model Order {
   id          String      @id @default(cuid())
   unique_id   String
   order_items OrderItem[]
-  discount    Int
-  total       Int
-  date        DateTime
+  is_deleted  Boolean     @default(false)
+  discount    Int         @default(0)
+  total       Int         @default(0)
+  date        DateTime    @default(now())
 }

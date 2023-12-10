@@ -15,18 +15,27 @@ type OrderItem = {
   quantity: number
 }
 
+export const getOrderData = async(search: string) => {
+  return await prisma.order.findMany({
+    where: {
+      unique_id: {
+        contains: search ? search : '',
+        mode: "insensitive",
+      },
+      is_deleted: false
+    },
+    include: {
+      order_items: true
+    },
+    orderBy: {
+      id: 'desc'
+    }
+  })
+}
+
 export async function GET(request: NextRequest) {
   const search = request.nextUrl.searchParams.get("search");
-  const order = await prisma.order.findMany(
-     {
-        where: {
-          unique_id: {
-            contains: search ? search : '',
-            mode: "insensitive",
-          },
-        },
-      }
-  )
+  const order = await getOrderData(search? search : '') 
   return NextResponse.json({ data: order });
 }
 
@@ -56,7 +65,13 @@ export async function POST(request: NextRequest) {
           id: item.id
         },
         data: {
-          stock: item_detail.stock - item.quantity
+          stock: item_detail.stock - item.quantity,
+          item_history: {
+            create: {
+              change: -item.quantity,
+              date: new Date().toISOString(),
+            }
+          }
         }
       })
     }

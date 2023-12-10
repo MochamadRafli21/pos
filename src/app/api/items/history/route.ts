@@ -13,6 +13,9 @@ export async function GET() {
           name: true
         }
       }
+    },
+    orderBy: {
+      id: 'desc'
     }
   })
   return NextResponse.json({ data: history });

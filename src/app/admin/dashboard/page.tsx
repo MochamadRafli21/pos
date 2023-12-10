@@ -1,9 +1,11 @@
 "use client"
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import ProductAdd from '@/components/Forms/addProduct'
 import ProductEdit from '@/components/Forms/editProduct'
 import Confirmation from '@/components/Modal/confirmation'
 import { Product } from '@/types/product'
+import { formatCurrency } from '@/helper'
 type OrderItem = {
   id: string
   name: string
@@ -22,6 +24,7 @@ export default function Dashboard() {
   const [total, setTotal] = useState(0)
   const [discount, setDiscount] = useState(0)
   const [displayMobileItems, setDisplayMobileItems] = useState(false)
+  const router = useRouter()
 
   const handleCheckout = () => {
     const checkout = async () => {
@@ -36,10 +39,13 @@ export default function Dashboard() {
         })
       })
       if(res.ok){
+        const data = await res.json()
+        console.log(data)
         setDisplayMobileItems(false)
         setSelectedItem([])
         setDiscount(0)
         setTotal(0)
+        router.push('/admin/history/'+data.data.id)
       }
     }
     checkout()
@@ -138,7 +144,7 @@ export default function Dashboard() {
           >
           <h1 className="font-bold text-2xl text-orange-400 mb-2">{product.name}</h1>
           <div>
-          <p>Price: {product.price}</p>
+          <p>Price: {formatCurrency(product.price)}</p>
           <p>Stock: {product.stock}</p>
           </div>
 
@@ -173,7 +179,7 @@ export default function Dashboard() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className='font-semibold text-xl'>{item.name}</h1>
-              <p>{item.price}/pcs</p>
+              <p>{formatCurrency(item.price)}/pcs</p>
             </div>
             <div className='flex gap-2 items-center text-[16px]'>
               <button
@@ -226,7 +232,7 @@ export default function Dashboard() {
         </div>
         <div className='flex w-full justify-between items-center'>
           <h1 className='font-semibold'>Total</h1>
-          <input placeholder="0" min={0} type="number" value={total > 0 ? total : '' } disabled className='w-1/3 border-1 border-orange-400 rounded px-4 py-1 font-semibold text-orange-400' />
+          <input placeholder="0" value={formatCurrency(total)} disabled className='w-1/3 border-1 border-orange-400 rounded px-4 py-1 font-semibold text-orange-400' />
         </div>
         <button
           className='w-full bg-white-400 border-2 border-orange-400 rounded px-4 py-2 font-semibold text-orange-400'
