@@ -29,6 +29,7 @@ export default function ProductAdd({
     if(res.ok){
       setDisplay(false)
       setIsProductUptodate(false)
+      setCreateProductPayload({})
     }
   }
   return (

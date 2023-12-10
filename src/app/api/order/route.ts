@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 type OrderPayload = {
   discount: number
   order_items: {
-    product_id: string
+    id: string
     quantity: number
   }[]
 }
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     OrderItem[] = await Promise.all(res.order_items.map(async (item) => {
     const item_detail = await prisma.item.findFirst({
       where: {
-        id: item.product_id
+        id: item.id
       }
     })
 
@@ -50,7 +50,17 @@ export async function POST(request: NextRequest) {
 
     if(item_detail.stock < item.quantity){
       throw new Error("Item not found")
+    }else{
+      await prisma.item.update({
+        where: {
+          id: item.id
+        },
+        data: {
+          stock: item_detail.stock - item.quantity
+        }
+      })
     }
+    console.log(item_detail.price)
 
     sums += item_detail.price * item.quantity
 

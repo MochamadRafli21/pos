@@ -19,7 +19,43 @@ export default function Dashboard() {
   const [editedProduct, setEditedProduct] = useState({})
   const [selectedItem, setSelectedItem] = useState([] as OrderItem[])
   const [products, setProducts] = useState([])
+  const [total, setTotal] = useState(0)
+  const [discount, setDiscount] = useState(0)
   const [displayMobileItems, setDisplayMobileItems] = useState(false)
+
+  const handleCheckout = () => {
+    const checkout = async () => {
+      const res = await fetch('/api/order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          order_items:selectedItem,
+          discount:discount
+        })
+      })
+      if(res.ok){
+        setDisplayMobileItems(false)
+        setSelectedItem([])
+        setDiscount(0)
+        setTotal(0)
+      }
+    }
+    checkout()
+  }
+
+  const handleGetTotal = () => {
+    let total = 0
+    selectedItem.forEach((item) => {
+      total += item.price * item.quantity
+    })
+    setTotal(total-discount)
+  }
+
+  useEffect(() => {
+    handleGetTotal()
+  }, [selectedItem, discount])
 
   const openDeleteModal = (product:Product)=>{
     setEditedProduct(product)
@@ -39,6 +75,7 @@ export default function Dashboard() {
     if(res.ok){
       setDeleteProductShown(false)
       setIsProductUptodate(false)
+      setEditedProduct({})
       }
     }
     deleteProduct(editedProduct as Product)
@@ -50,6 +87,7 @@ export default function Dashboard() {
       const items = await res.json()
       setProducts(items.data)
       setIsProductUptodate(true)
+      setSelectedItem([])
     }
     if(isProductUptodate) return
     getProducts()
@@ -120,18 +158,18 @@ export default function Dashboard() {
       </div>
       <div 
         className={
-          displayMobileItems ?
-            "fixed z-10 md:static md:z-0 w-full h-full bg-white col-span-1 p-2 ease-in-out delay-100 transform translate-y-[50px] md:translate-y-0" 
-            : "fixed z-10 md:static md:z-0 w-full h-full bg-white col-span-1 p-2 top-0 ease-in-out delay-100"}>
+          !displayMobileItems ?
+            "fixed z-10 md:static md:z-0 w-full min-h-[200px] md:h-fit md:max-h-[400px] overflow-y-auto bg-white col-span-1 p-2 bottom-10 ease-in-out delay-100 transform translate-y-[50px] md:translate-y-0" 
+              : "fixed z-10 md:static md:z-0 w-full h-full md:h-fit min-h-[200px] bg-white col-span-1 p-2 top-0 ease-in-out delay-100"}>
       <div className="flex justify-between"
         onClick={() => setDisplayMobileItems(!displayMobileItems)}
       >
         <h1 className='text-orange-400 font-bold text-2xl my-2'>Pesanan Baru</h1>
-        <p className='text-gray-400 font-bold text-xl my-2'>Item: {selectedItem.length}</p>
+        <p className={'md:hidden text-gray-400 font-bold text-xl my-2'}>Total: {total}</p>
       </div>
       {selectedItem.map((item)=>(
         <div key={item.id} 
-        className={displayMobileItems ? "hidden md:block text-xs bg-white w-full rounded-xl p-2":"text-xs bg-white w-full rounded-xl p-2"}>
+        className={!displayMobileItems ? "hidden md:block text-xs bg-white w-full rounded-xl p-2":"text-xs bg-white w-full rounded-xl p-2"}>
           <div className="flex items-center justify-between">
             <div>
               <h1 className='font-semibold text-xl'>{item.name}</h1>
@@ -181,6 +219,29 @@ export default function Dashboard() {
           </div>
         </div>
       ))}
+      <div className={displayMobileItems ? "flex flex-col gap-2 text-xs bg-white w-full rounded-xl p-2 mb-[100px] md:mb-0":"hidden md:flex flex-col gap-2 text-xs bg-white w-full rounded-xl p-2 mb-[100px] md:mb-0"}>
+        <div className='flex w-full justify-between items-center'>
+          <h1 className='font-semibold'>Discount</h1>
+          <input placeholder="0"  value={discount} onChange={(e) => setDiscount(e.target.value ? parseInt(e.target.value): 0)} className='w-1/3 border-1 border-orange-400 rounded px-4 py-1 font-semibold text-orange-400' />
+        </div>
+        <div className='flex w-full justify-between items-center'>
+          <h1 className='font-semibold'>Total</h1>
+          <input placeholder="0" min={0} type="number" value={total > 0 ? total : '' } disabled className='w-1/3 border-1 border-orange-400 rounded px-4 py-1 font-semibold text-orange-400' />
+        </div>
+        <button
+          className='w-full bg-white-400 border-2 border-orange-400 rounded px-4 py-2 font-semibold text-orange-400'
+          onClick={() => {
+            setDisplayMobileItems(false)
+            setSelectedItem([])
+            setDiscount(0)
+            setTotal(0)
+          }}
+        >X Reset</button>
+        <button
+          className='w-full bg-orange-400 rounded px-4 py-2 font-semibold text-white'
+          onClick={() => handleCheckout()}
+        >Checkout</button>
+      </div>
       </div>
       <ProductAdd shown={addProductShown} setDisplay={setaddProductShown} setIsProductUptodate={setIsProductUptodate} />
       <ProductEdit shown={editProductShown} setDisplay={setEditProductShown} data={editedProduct as Product} setIsProductUptodate={setIsProductUptodate} />

@@ -35,6 +35,7 @@ export default function ProductEdit({
     if(res.ok){
       setDisplay(false)
       setIsProductUptodate(false)
+      setCreateProductPayload(data)
     }
   }
   return (

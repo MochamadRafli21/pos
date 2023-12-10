@@ -21,7 +21,7 @@ model Item {
 
 model StockHistory {
   id     String   @id @default(cuid())
-  Item   Item     @relation(fields: [itemId], references: [id])
+  item   Item     @relation(fields: [itemId], references: [id])
   change Int
   date   DateTime
   itemId String
@@ -34,6 +34,7 @@ model OrderItem {
   quantity Int
   order    Order  @relation(fields: [orderId], references: [id])
   orderId  String
+  createdAt DateTime  @default(now())
 }
 
 model Order {
