@@ -17,12 +17,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-      <AuthCheck />
-      <div className='md:flex overflow-y-clip pb-32 md:pb-0'>
-        <Navbar />
-        <Sidebar />
-        {children}
-      </div>
+        <AuthCheck />
+        <div className='md:flex overflow-y-clip pb-32 md:pb-0'>
+          <Navbar />
+          <Sidebar />
+          {children}
+        </div>
       </body>
     </html>
   )

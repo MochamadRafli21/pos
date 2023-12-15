@@ -18,9 +18,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-      <CookiesProvider>
-      {children}
-      </CookiesProvider>
+        <CookiesProvider>
+          {children}
+        </CookiesProvider>
       </body>
     </html>
   )

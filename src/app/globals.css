@@ -17,3 +17,12 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+@media print {
+  body {
+    background: none;
+  }
+  .no-print {
+    display: none;
+  }
+}
