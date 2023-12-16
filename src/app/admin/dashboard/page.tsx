@@ -103,7 +103,6 @@ export default function Dashboard() {
   const handleSearchProduct = (e: React.ChangeEvent<HTMLInputElement>) => {
     const getProducts = async () => {
       const res = await fetch("/api/items?search=" + e.target.value);
-      if (res.ok) return;
       const items = await res.json();
       setProducts(items.data);
     };
