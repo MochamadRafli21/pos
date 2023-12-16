@@ -1,6 +1,7 @@
 import { revalidatePath } from "next/cache";
 import prisma from "../../../../prisma/prismaClient";
 import { NextRequest, NextResponse } from 'next/server';
+import { getOrderData } from "../../service/index";
 
 type OrderPayload = {
   discount: number
@@ -16,23 +17,6 @@ type OrderItem = {
   quantity: number
 }
 
-export const getOrderData = async (search: string) => {
-  return await prisma.order.findMany({
-    where: {
-      unique_id: {
-        contains: search ? search : '',
-        mode: "insensitive",
-      },
-      is_deleted: false
-    },
-    include: {
-      order_items: true
-    },
-    orderBy: {
-      id: 'desc'
-    }
-  })
-}
 
 export async function GET(request: NextRequest) {
   const search = request.nextUrl.searchParams.get("search");

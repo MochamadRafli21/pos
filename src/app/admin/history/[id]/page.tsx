@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { getOrderDataDetail } from '@/app/api/order/[id]/route';
+import { getOrderDataDetail } from '../../../service/index';
 import { formatCurrency } from '@/helper';
 import DeleteOrder from '@/components/Modal/deleteOrder';
 import PrintButton from '@/components/Button/print';

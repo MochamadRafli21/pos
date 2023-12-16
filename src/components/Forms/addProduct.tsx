@@ -1,4 +1,11 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+
+type ProductAdd = {
+  name: string
+  price: number
+  stock: number
+  description: string
+}
 
 export default function ProductAdd({
   shown,
@@ -9,7 +16,15 @@ export default function ProductAdd({
   setDisplay: React.Dispatch<React.SetStateAction<boolean>>,
   setIsProductUptodate: React.Dispatch<React.SetStateAction<boolean>>
 }) {
-  const [createProductPayload, setCreateProductPayload] = useState({})
+  const [createProductPayload, setCreateProductPayload] = useState<ProductAdd>({
+    name: '',
+    price: 0,
+    stock: 0,
+    description: ''
+  })
+  useEffect(() => {
+    setCreateProductPayload({} as ProductAdd)
+  }, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setCreateProductPayload({
@@ -28,11 +43,23 @@ export default function ProductAdd({
       body: JSON.stringify(createProductPayload)
     })
     if (res.ok) {
-      setDisplay(false)
       setIsProductUptodate(false)
-      setCreateProductPayload({})
+      setCreateProductPayload({} as ProductAdd)
+      setDisplay(false)
     }
   }
+
+  useEffect(() => {
+    setCreateProductPayload({
+      name: '',
+      price: 0,
+      stock: 0,
+      description: ''
+    })
+    console.log(createProductPayload)
+  }, [shown])
+
+
   return (
     <>
       <div
@@ -49,21 +76,25 @@ export default function ProductAdd({
           <form className="w-full flex flex-col gap-2" onSubmit={(e) => createProduct(e)}>
             <label htmlFor="name">Product Name</label>
             <input
+              value={createProductPayload.name}
               onChange={(e) => handleChange(e)}
               className="w-full border-gray border-2 h-10 rounded-xl p-2" name="name" placeholder="Product Name..." />
             <label htmlFor="price">Price</label>
             <input
+              value={createProductPayload.price}
               onChange={(e) => handleChange(e)}
               className="w-full border-gray border-2 h-10 rounded-xl p-2" type="number" name="price" min="0" placeholder="Product Price..." />
             <label htmlFor="stock">Stock</label>
             <input
+              value={createProductPayload.stock}
               onChange={(e) => handleChange(e)}
               className="w-full border-gray border-2 h-10 rounded-xl p-2" type='number' name="stock" min="0" placeholder="Product Stock..." />
             <label htmlFor="description">Description</label>
             <textarea
+              value={createProductPayload.description}
               onChange={(e) => handleChange(e)}
               className="w-full border-gray border-2 h-30 rounded-xl p-2 resize-y" rows={3} name="description" placeholder="Product Description..." />
-            <button className="bg-orange-400 rounded-xl px-4 py-2 flex justify-between ">
+            <button type='submit' className="bg-orange-400 rounded-xl px-4 py-2 flex justify-between ">
               <h1 className="text-white w-full font-bold">Add Product</h1>
             </button>
           </form>

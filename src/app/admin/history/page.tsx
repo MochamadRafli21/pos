@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import DeleteOrder from '@/components/Modal/deleteOrder';
-import { getOrderData } from '@/app/api/order/route';
+import { getOrderData } from '../../service/index';
 type Order = {
   id: string
   unique_id: string

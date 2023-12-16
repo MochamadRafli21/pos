@@ -1,18 +1,7 @@
 import { revalidatePath } from "next/cache";
 import prisma from "../../../../../prisma/prismaClient";
 import { NextRequest, NextResponse } from 'next/server';
-
-export async function getOrderDataDetail(id: string) {
-  return await prisma.order.findFirst({
-    where: {
-      id,
-      is_deleted: false
-    },
-    include: {
-      order_items: true
-    }
-  })
-}
+import { getOrderDataDetail } from "../../../service/index";
 
 export async function GET(_: NextRequest, { params }: { params: { id: string } }) {
   const id = params.id
