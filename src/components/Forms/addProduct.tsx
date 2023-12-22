@@ -1,20 +1,17 @@
 import React, { useEffect, useState } from 'react'
 
-type ProductAdd = {
-  name: string
-  price: number
-  stock: number
-  description: string
-}
+import { ProductAdd } from '@/libs/types'
 
 export default function ProductAdd({
   shown,
   setDisplay,
-  setIsProductUptodate
+  setIsProductUptodate,
+  errorHandler,
 }: {
   shown: boolean,
   setDisplay: React.Dispatch<React.SetStateAction<boolean>>,
   setIsProductUptodate: React.Dispatch<React.SetStateAction<boolean>>
+  errorHandler: (error: any) => void
 }) {
   const [createProductPayload, setCreateProductPayload] = useState<ProductAdd>({
     name: '',
@@ -35,17 +32,21 @@ export default function ProductAdd({
 
   const createProduct = async (e: React.FormEvent) => {
     e.preventDefault()
-    const res = await fetch('/api/items', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(createProductPayload)
-    })
-    if (res.ok) {
-      setIsProductUptodate(false)
-      setCreateProductPayload({} as ProductAdd)
-      setDisplay(false)
+    try {
+      const res = await fetch('/api/items', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(createProductPayload)
+      })
+      if (res.ok) {
+        setIsProductUptodate(false)
+        setCreateProductPayload({} as ProductAdd)
+        setDisplay(false)
+      }
+    } catch (error) {
+      errorHandler(error)
     }
   }
 

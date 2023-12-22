@@ -1,7 +1,7 @@
 import { revalidatePath } from "next/cache";
 import prisma from "../../../../../prisma/prismaClient";
 import { NextRequest, NextResponse } from 'next/server';
-import { getOrderDataDetail } from "../../../service/index";
+import { getOrderDataDetail } from "@/libs/service/prisma/index";
 
 export async function GET(_: NextRequest, { params }: { params: { id: string } }) {
   const id = params.id

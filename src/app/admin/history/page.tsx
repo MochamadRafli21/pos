@@ -1,15 +1,14 @@
 import Link from 'next/link'
-import DeleteOrder from '@/components/Modal/deleteOrder';
-import { getOrderData } from '../../service/index';
 
-type Order = {
-  id: string;
-  unique_id: string;
-  date: string;
-};
+import DeleteOrder from '@/components/Modal/deleteOrder';
+
+import { getOrderData } from '@/libs/service/prisma';
+import { Order } from '@/libs/types';
+import { OrderInvalidRequest } from '@/libs/exceptions';
+
 
 export default async function History() {
-  async function getOrder() {
+  async function getOrderList() {
     try {
       const res = await getOrderData("");
       if (!res) return;
@@ -22,11 +21,11 @@ export default async function History() {
       });
       return items;
     } catch (error) {
-      console.log(error);
+      throw new OrderInvalidRequest();
     }
   }
 
-  const orders = await getOrder();
+  const orders = await getOrderList();
   return (
     <main className="min-h-screen w-full md:p-2">
       <div className="w-full p-4 bg-white">

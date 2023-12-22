@@ -2,16 +2,10 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
-type OrderDetail = {
-  id: string
-  unique_id: string
-  date: string
-  order_items: {
-    id: string
-    name: string
-    quantity: number
-  }[]
-}
+import MessageToast from '../Toast/message'
+
+import { Message, OrderDetail } from '@/libs/types'
+
 
 export default function DeleteOrder({
   id,
@@ -19,17 +13,29 @@ export default function DeleteOrder({
 }: { id: string, className?: string }) {
   const router = useRouter()
   const [shown, setDisplay] = useState(false)
+  const [messages, setMessages] = useState([] as Message[])
   const [data, setDisplayData] = useState({} as OrderDetail)
 
   const executeFn = () => {
     const handleExecute = async () => {
-      const res = await fetch(`/api/order/${id}`, {
-        method: 'DELETE'
-      })
-      if (res.ok) {
-        setDisplay(false)
-        router.push("/admin/history")
-        router.refresh()
+      try {
+        const res = await fetch(`/api/order/${id}`, {
+          method: 'DELETE'
+        })
+        if (res.ok) {
+          setDisplay(false)
+          router.push("/admin/history")
+          router.refresh()
+        }
+      } catch (error: any) {
+        setMessages([
+          ...messages,
+          {
+            type: 'ERROR',
+            message: error.message || 'Hubungi admin untuk melanjutkan',
+            name: 'Hapus Pesanan Gagal',
+          }
+        ])
       }
     }
     handleExecute()
@@ -84,6 +90,10 @@ export default function DeleteOrder({
           </div>
         </div>
       </div>
+      <MessageToast
+        messages={messages}
+        setMessages={setMessages}
+      />
     </>
   )
 }

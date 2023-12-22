@@ -1,7 +1,7 @@
 import { revalidatePath } from "next/cache";
 import prisma from "../../../../prisma/prismaClient";
 import { NextRequest, NextResponse } from 'next/server';
-import { getOrderData } from "../../service/index";
+import { getOrderData } from "@/libs/service/prisma/index";
 
 type OrderPayload = {
   discount: number

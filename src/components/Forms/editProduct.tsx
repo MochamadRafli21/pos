@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Product } from '@/types/product'
+import { Product } from '@/libs/types/product'
 
 export default function ProductEdit({
   data,

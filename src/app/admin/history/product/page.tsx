@@ -1,19 +1,20 @@
 "use client"
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-type ItemHistory = {
-  change: number
-  id: string
-  item: {
-    name: string
-  }
-}
+import { ItemHistory } from '@/libs/types'
+import { ProductInvalidRequest } from '@/libs/exceptions'
+
 export default function ItemHistory() {
   const [items, setitems] = useState([])
   useEffect(() => {
     const getHistory = async () => {
-      const res = await fetch('/api/items/history')
-      const box = await res.json()
+      let box = []
+      try {
+        const res = await fetch('/api/items/history')
+        box = await res.json()
+      } catch (error) {
+        throw new ProductInvalidRequest()
+      }
       setitems(box.data.map((item: ItemHistory) => {
         return {
           id: item.id,
@@ -50,7 +51,7 @@ export default function ItemHistory() {
           </div>
         </div>
       </div>
-      {items.map((item: any) => (
+      {items.map((item: ItemHistory) => (
         <div className="w-full p-4 bg-white rounded-xl  my-2" key={item.id}>
           <div className="grid grid-cols-2">
             <div>
