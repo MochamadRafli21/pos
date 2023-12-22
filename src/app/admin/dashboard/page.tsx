@@ -1,17 +1,16 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+
 import ProductAdd from "@/components/Forms/addProduct";
 import ProductEdit from "@/components/Forms/editProduct";
 import Confirmation from "@/components/Modal/confirmation";
-import { Product } from "@/types/product";
-import { formatCurrency } from "@/helper";
-type OrderItem = {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-};
+
+import { Product, OrderItem, Message } from "@/libs/types";
+import { formatCurrency } from "@/libs/utils";
+import { ProductInvalidRequest } from "@/libs/exceptions";
+import MessageToast from "@/components/Toast/message";
+
 
 export default function Dashboard() {
   const [addProductShown, setaddProductShown] = useState(false);
@@ -21,6 +20,7 @@ export default function Dashboard() {
   const [editedProduct, setEditedProduct] = useState({});
   const [selectedItem, setSelectedItem] = useState([] as OrderItem[]);
   const [products, setProducts] = useState([]);
+  const [messages, setMessages] = useState([] as Message[]);
   const [total, setTotal] = useState(0);
   const [discount, setDiscount] = useState(0);
   const [displayMobileItems, setDisplayMobileItems] = useState(false);
@@ -45,7 +45,22 @@ export default function Dashboard() {
         setDiscount(0);
         setTotal(0);
         if (!data) return;
+        setMessages([
+          ...messages,
+          {
+            type: 'SUCCESS',
+            message: "Checkout Berhasil",
+            name: 'Order Submitted',
+          }])
         router.push("/admin/history/" + data.data.id);
+      } else {
+        setMessages([
+          ...messages,
+          {
+            type: 'ERROR',
+            message: "Gagal Checkout",
+            name: 'Order Submit Failed',
+          }])
       }
     };
     checkout();
@@ -75,13 +90,24 @@ export default function Dashboard() {
 
   const handleDeleteProduct = () => {
     const deleteProduct = async (payload: Product) => {
-      const res = await fetch(`/api/items/${payload.id}`, {
-        method: "DELETE",
-      });
-      if (res.ok) {
-        setDeleteProductShown(false);
-        setIsProductUptodate(false);
-        setEditedProduct({});
+      try {
+        const res = await fetch(`/api/items/${payload.id}`, {
+          method: "DELETE",
+        });
+        if (res.ok) {
+          setDeleteProductShown(false);
+          setIsProductUptodate(false);
+          setEditedProduct({});
+        }
+      } catch (error: any) {
+        setMessages([
+          ...messages,
+          {
+            type: 'ERROR',
+            message: error.message || "Gagal Menghapus Data",
+            name: 'Product Fetch Failed',
+          }
+        ]);
       }
     };
     deleteProduct(editedProduct as Product);
@@ -90,7 +116,7 @@ export default function Dashboard() {
   useEffect(() => {
     const getProducts = async () => {
       const res = await fetch("/api/items");
-      if (!res.ok) return;
+      if (!res.ok) throw new ProductInvalidRequest();
       const items = await res.json();
       setProducts(items.data);
       setIsProductUptodate(true);
@@ -102,9 +128,20 @@ export default function Dashboard() {
 
   const handleSearchProduct = (e: React.ChangeEvent<HTMLInputElement>) => {
     const getProducts = async () => {
-      const res = await fetch("/api/items?search=" + e.target.value);
-      const items = await res.json();
-      setProducts(items.data);
+      try {
+        const res = await fetch("/api/items?search=" + e.target.value);
+        const items = await res.json();
+        setProducts(items.data);
+      } catch (error: any) {
+        setMessages([
+          ...messages,
+          {
+            type: 'ERROR',
+            message: error.message || "Gagal Memuat Data",
+            name: 'Product Fetch Failed',
+          }
+        ]);
+      }
     };
     getProducts();
   };
@@ -313,6 +350,16 @@ export default function Dashboard() {
         shown={addProductShown}
         setDisplay={setaddProductShown}
         setIsProductUptodate={setIsProductUptodate}
+        errorHandler={(error) => {
+          setMessages([
+            ...messages,
+            {
+              type: 'ERROR',
+              message: error.message || 'Gagal Menambahkan Produk',
+              name: 'Gagal Menambahkan Produk'
+            }
+          ])
+        }}
       />
       <ProductEdit
         shown={editProductShown}
@@ -325,6 +372,10 @@ export default function Dashboard() {
         setDisplay={setDeleteProductShown}
         title="Apakah Anda Yakin Menghapus Produk Ini?"
         executeFn={handleDeleteProduct}
+      />
+      <MessageToast
+        setMessages={setMessages}
+        messages={messages}
       />
     </main>
   );

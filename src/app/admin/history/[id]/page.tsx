@@ -1,8 +1,13 @@
 import Link from 'next/link'
-import { getOrderDataDetail } from '../../../service/index';
-import { formatCurrency } from '@/helper';
+
+import { getOrderDataDetail } from '@/libs/service/prisma';
+import { formatCurrency } from '@/libs/utils';
+
 import DeleteOrder from '@/components/Modal/deleteOrder';
 import PrintButton from '@/components/Button/print';
+
+import { OrderNotFound, OrderInvalidRequest } from '@/libs/exceptions';
+
 
 export default async function TransactionDetail({
   params,
@@ -13,9 +18,10 @@ export default async function TransactionDetail({
   async function getOrder() {
     try {
       const res = await getOrderDataDetail(id);
+      if (!res) throw new OrderNotFound()
       return res;
     } catch (error) {
-      console.log(error);
+      throw new OrderInvalidRequest()
     }
   }
 
