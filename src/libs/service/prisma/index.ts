@@ -1,3 +1,5 @@
+import prisma from "../../../../prisma/prismaClient"
+
 export async function getOrderDataDetail(id: string) {
   return await prisma.order.findFirst({
     where: {
