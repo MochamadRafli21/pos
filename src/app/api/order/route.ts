@@ -30,66 +30,71 @@ export async function POST(request: NextRequest) {
     return new Response("Order Items Cant be empty!", { status: 400 })
   }
   let sums = 0
-  const items:
-    OrderItem[] = await Promise.all(res.order_items.map(async (item) => {
-      const item_detail = await prisma.item.findFirst({
-        where: {
-          id: item.id
-        }
-      })
-
-      if (!item_detail) {
-        throw new Error("Item not found")
-      }
-
-      if (item_detail.stock < item.quantity) {
-        throw new Error("Item not found")
-      } else {
-        await prisma.item.update({
+  try {
+    const items:
+      OrderItem[] = await Promise.all(res.order_items.map(async (item) => {
+        const item_detail = await prisma.item.findFirst({
           where: {
             id: item.id
-          },
-          data: {
-            stock: item_detail.stock - item.quantity,
-            item_history: {
-              create: {
-                change: -item.quantity,
-                date: new Date().toISOString(),
-              }
-            }
           }
         })
-      }
 
-      sums += item_detail.price * item.quantity
+        if (!item_detail) {
+          throw new Error("Item not found")
+        }
 
-      return {
-        name: item_detail.name,
-        price: item_detail.price,
-        quantity: item.quantity
-      }
-    }))
-  sums -= res.discount
-  if (sums < 0) {
-    return new Response("Invalid Order", { status: 400 })
-  }
+        if (item_detail.stock < item.quantity) {
+          throw new Error("Item Qty Not Enough")
+        } else {
+          await prisma.item.update({
+            where: {
+              id: item.id
+            },
+            data: {
+              stock: item_detail.stock - item.quantity,
+              item_history: {
+                create: {
+                  change: -item.quantity,
+                  date: new Date().toISOString(),
+                }
+              }
+            }
+          })
+        }
 
-  const data = await prisma.order.create({
-    data: {
-      unique_id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
-      order_items: {
-        create: items
-      },
-      total: sums,
-      discount: res.discount,
-      date: new Date().toISOString(),
-    },
-    include: {
-      order_items: true
+        sums += item_detail.price * item.quantity
+
+        return {
+          name: item_detail.name,
+          price: item_detail.price,
+          quantity: item.quantity
+        }
+      }))
+    sums -= res.discount
+    if (sums < 0) {
+      return new Response("Invalid Order", { status: 400 })
     }
-  })
 
-  revalidatePath('/admin/history')
-  return NextResponse.json({ data });
+    const data = await prisma.order.create({
+      data: {
+        unique_id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
+        order_items: {
+          create: items
+        },
+        total: sums,
+        discount: res.discount,
+        date: new Date().toISOString(),
+      },
+      include: {
+        order_items: true
+      }
+    })
+
+    revalidatePath('/admin/history')
+    return NextResponse.json({ data });
+
+  } catch (error: any) {
+    return NextResponse.json({ message: error?.message || "Something went wrong" }, { status: 400 })
+  }
 }
 

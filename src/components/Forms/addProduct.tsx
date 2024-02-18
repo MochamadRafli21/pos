@@ -45,6 +45,7 @@ export default function ProductAdd({
         setCreateProductPayload({} as ProductAdd)
         setDisplay(false)
       }
+
     } catch (error) {
       errorHandler(error)
     }
