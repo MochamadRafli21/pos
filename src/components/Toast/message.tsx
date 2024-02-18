@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { createPortal } from 'react-dom';
 
 
@@ -10,16 +10,19 @@ export default function MessageToast({ messages, setMessages }: {
   messages: Message[],
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>
 }) {
+  const [mounted, setMounted] = useState(false);
   useEffect(() => {
+    setMounted(true);
     setTimeout(() => {
       if (messages.length > 0) {
         setMessages(messages.slice(1));
       } else {
         setMessages([]);
       }
-    }, 3000);
+    }, 5000);
+    return () => setMounted(false);
   }, [messages])
-  return (
+  return mounted ? (
     <>
       {createPortal(
         <div className="absolute z-[100] top-0 right-0 p-4 flex gap-2 flex-col">
@@ -49,5 +52,5 @@ export default function MessageToast({ messages, setMessages }: {
         </div>,
         document.body)}
     </>
-  );
+  ) : null;
 }
