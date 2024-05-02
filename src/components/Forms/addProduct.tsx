@@ -58,7 +58,6 @@ export default function ProductAdd({
       stock: 0,
       description: ''
     })
-    console.log(createProductPayload)
   }, [shown])
 
 

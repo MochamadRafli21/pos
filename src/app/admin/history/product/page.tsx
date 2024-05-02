@@ -28,13 +28,13 @@ export default function ItemHistory() {
 
   return (
     <main className="min-h-screen w-full md:p-2">
-      <div className="w-full p-4 bg-white">
+      <div className="w-full p-4 bg-white rounded-xl">
         <div className='flex gap-4'>
           <Link href="/admin/history">
-            <h1 className="font-bold text-gray-400 mb-2">Transactions</h1>
+            <h1 className="font-bold text-gray-400 hover:text-orange-300 mb-2">Transactions</h1>
           </Link>
           <Link href="/admin/history/product">
-            <h1 className="font-bold text-xl text-orange-400 mb-2">Product</h1>
+            <h1 className="font-bold text-orange-400 mb-2">Product</h1>
           </Link>
         </div>
         <Link href={'/admin/dashboard'} className="bg-orange-400 w-fit rounded-xl px-4 py-2 flex justify-between ">

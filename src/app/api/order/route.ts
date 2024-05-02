@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
         }
 
         if (item_detail.stock < item.quantity) {
-          throw new Error("Item Qty Not Enough")
+          throw new Error("Stock not enough")
         } else {
           await prisma.item.update({
             where: {
@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ data });
 
   } catch (error: any) {
-    return NextResponse.json({ message: error?.message || "Something went wrong" }, { status: 400 })
+    return NextResponse.json({ message: error.message || "Something went wrong" }, { status: 400 })
   }
 }
 

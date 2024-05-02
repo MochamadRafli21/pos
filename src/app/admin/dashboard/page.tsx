@@ -38,8 +38,8 @@ export default function Dashboard() {
           discount: discount,
         }),
       });
+      const data = await res.json();
       if (res.ok) {
-        const data = await res.json();
         setDisplayMobileItems(false);
         setSelectedItem([]);
         setDiscount(0);
@@ -58,7 +58,7 @@ export default function Dashboard() {
           ...messages,
           {
             type: 'ERROR',
-            message: "Gagal Checkout",
+            message: data.message || "Gagal Checkout",
             name: 'Order Submit Failed',
           }])
       }
@@ -223,8 +223,8 @@ export default function Dashboard() {
       <div
         className={
           !displayMobileItems
-            ? "fixed z-10 md:static md:z-0 w-full min-h-[200px] md:h-fit md:max-h-[400px] overflow-y-auto bg-white col-span-1 p-2 bottom-10 ease-in-out delay-100 transform translate-y-[50px] md:translate-y-0"
-            : "fixed z-10 md:static md:z-0 w-full h-full md:h-fit min-h-[200px] bg-white col-span-1 p-2 top-0 ease-in-out delay-100"
+            ? "rounded-xl fixed z-10 md:static md:z-0 w-full min-h-[160px] md:h-fit md:max-h-[400px] overflow-y-auto bg-white col-span-1 p-2 bottom-10 ease-in-out delay-100 transform translate-y-[50px] md:translate-y-0"
+            : "rounded-xl fixed z-10 md:static md:z-0 w-full h-full md:h-fit min-h-[200px] bg-white col-span-1 p-2 top-0 ease-in-out delay-100"
         }
       >
         <div
