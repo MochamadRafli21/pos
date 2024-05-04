@@ -54,11 +54,12 @@ export default async function History() {
         </div>
         {orders ? (
           orders.map((order: Order) => (
-            <div className="w-full p-4 bg-white rounded-xl mb-4" key={order.id}>
+            <div className="w-full py-2 px-4 bg-white rounded-xl mb-4" key={order.id}>
               <div className="grid grid-cols-2">
                 <div>
                   <Link href={"/admin/history/" + order.id} className={""}>
-                    <p>{order.date}</p>
+                    <h1 className="font-bold text-xl text-orange-400 mb-2">{order.unique_id}</h1>
+                    <p className="text-gray-400 text-sm">{order.date}</p>
                   </Link>
                 </div>
                 <div className="w-full flex justify-end">

@@ -168,12 +168,12 @@ export default function Dashboard() {
           />
         </div>
 
-        <div className="w-full relative p-2 md:p-0 md:flex gap-4 justify-between flex-auto flex-wrap">
+        <div className="w-full relative p-2 md:p-0  gap-4 grid grid-cols-1 md:grid-cols-2">
           {products ? (
             products.map((product: Product) => (
               <div
                 key={product.id}
-                className="bg-white w-full md:w-[250px] h-[250px] mb-4 md:mb-0 grow flex flex-col justify-around rounded-xl p-4"
+                className="bg-white w-full h-[250px] mb-4 md:mb-0 justify-around rounded-xl p-4"
               >
                 <div
                   className="hover:bg-orange-50 hover:cursor-pointer rounded-xl p-4"
@@ -223,20 +223,25 @@ export default function Dashboard() {
       <div
         className={
           !displayMobileItems
-            ? "rounded-xl fixed z-10 md:static md:z-0 w-full min-h-[160px] md:h-fit md:max-h-[400px] overflow-y-auto bg-white col-span-1 p-2 bottom-10 ease-in-out delay-100 transform translate-y-[50px] md:translate-y-0"
-            : "rounded-xl fixed z-10 md:static md:z-0 w-full h-full md:h-fit min-h-[200px] bg-white col-span-1 p-2 top-0 ease-in-out delay-100"
+            ? "rounded-xl shadow-xl fixed z-10 md:static md:z-0 w-full min-h-[160px] md:h-fit md:max-h-[400px] overflow-y-auto bg-white col-span-1 p-2 bottom-10 ease-in-out delay-100 transform translate-y-[50px] md:translate-y-0"
+            : "rounded-xl shadow-xl fixed z-10 md:static md:z-0 w-full h-full md:h-fit min-h-[200px] bg-white col-span-1 p-2 top-0 ease-in-out delay-100"
         }
       >
         <div
-          className="flex justify-between"
           onClick={() => setDisplayMobileItems(!displayMobileItems)}
         >
-          <h1 className="text-orange-400 font-bold text-2xl my-2">
-            Pesanan Baru
-          </h1>
-          <p className={"md:hidden text-gray-400 font-bold text-xl my-2"}>
-            Total: {total}
-          </p>
+          <div className="flex md:hidden w-full justify-center">
+            <div className="bg-orange-300 rounded-xl w-28 h-2"></div>
+          </div>
+          <div
+            className="flex justify-between">
+            <h1 className="text-orange-400 font-bold text-2xl my-2">
+              Pesanan Baru
+            </h1>
+            <p className={"md:hidden text-gray-400 font-bold text-xl my-2"}>
+              Total: {total}
+            </p>
+          </div>
         </div>
         {selectedItem.map((item) => (
           <div

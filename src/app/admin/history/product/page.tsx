@@ -18,8 +18,13 @@ export default function ItemHistory() {
       setitems(box.data.map((item: ItemHistory) => {
         return {
           id: item.id,
-          name: item.item.name,
-          change: item.change
+          change: item.change,
+          date: item.date,
+          item: {
+            name: item.item.name,
+            price: item.item.price,
+            stock: item.item.stock
+          }
         }
       }))
     }
@@ -42,24 +47,30 @@ export default function ItemHistory() {
         </Link>
       </div>
       <div className="w-full px-4 mt-4" >
-        <div className="grid grid-cols-2">
+        <div className="grid grid-cols-3">
           <div>
             <h3 className="font-semibold text-gray-400  mb-2 elipsis break-all">Item Name</h3>
           </div>
-          <div className='w-full flex justify-start'>
+          <div className='w-full flex justify-center'>
             <h3 className="font-semibold text-gray-400  mb-2 elipsis break-all">Change</h3>
+          </div>
+          <div className='w-full flex justify-center'>
+            <h3 className="font-semibold text-gray-400  mb-2 elipsis break-all">Final Amount</h3>
           </div>
         </div>
       </div>
       {items.map((item: ItemHistory) => (
-        <div className="w-full p-4 bg-white rounded-xl  my-2" key={item.id}>
-          <div className="grid grid-cols-2">
+        <div className="w-full px-4 py-2 bg-white rounded-xl my-2" key={item.id}>
+          <div className="grid grid-cols-3">
             <div>
-              <h1 className="text-xl font-semibold text-orange-400  mb-2 elipsis break-all">{item.name}</h1>
-              <p>{item.price}</p>
+              <h1 className="text-xl font-semibold text-orange-400  mb-2 elipsis break-all">{item.item.name}</h1>
+              <p className="text-gray-400 text-sm elipsis break-all">Updated on {item.date}</p>
             </div>
-            <div className='w-full flex justify-start'>
+            <div className='w-full flex justify-center'>
               <h2>{item.change}</h2>
+            </div>
+            <div className='w-full flex justify-center'>
+              <h2>{item.item.stock}</h2>
             </div>
           </div>
         </div>

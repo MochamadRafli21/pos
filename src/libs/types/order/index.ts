@@ -24,10 +24,13 @@ export type OrderItem = {
 
 export type ItemHistory = {
   change: number
-  price: number;
+  latestQty: number
+  date: string
   name: string
   id: string
   item: {
-    name: string
+    name: string;
+    price: number;
+    stock: number;
   }
 }
