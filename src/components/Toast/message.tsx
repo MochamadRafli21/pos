@@ -25,7 +25,7 @@ export default function MessageToast({ messages, setMessages }: {
   return mounted ? (
     <>
       {createPortal(
-        <div className="absolute z-[100] top-0 right-0 p-4 flex gap-2 flex-col">
+        <div className="fixed z-[100] top-0 right-0 p-4 flex gap-2 flex-col">
           {messages.map((message: Message, index) => (
             <div
               onClick={() => {

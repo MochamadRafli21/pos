@@ -65,11 +65,11 @@ export default function ProductAdd({
     <>
       <div
         onClick={() => setDisplay(false)}
-        className={!shown ? "hidden" : "flex justify-center items-center w-screen h-full bg-gray-800 opacity-30 z-50 top-1/2 left-1/2 transform translate-x-[-50%] translate-y-[-50%]  absolute"}
+        className={!shown ? "hidden" : "flex justify-center items-center w-screen h-full bg-gray-800 opacity-30 z-50 top-1/2 left-1/2 transform translate-x-[-50%] translate-y-[-50%]  fixed"}
       >
       </div>
       <div>
-        <div className={!shown ? "hidden" : "bg-white gap-4 w-full h-full md:w-1/3 md:h-fit md:rounded-xl p-4 md:flex z-[60] absolute md:transform md:translate-x-[-50%] md:translate-y-[-50%] top-0 md:top-1/2 md:left-1/2"}>
+        <div className={!shown ? "hidden" : "bg-white gap-4 w-full h-full md:w-1/3 md:h-fit md:rounded-xl p-4 md:flex z-[60] fixed md:transform md:translate-x-[-50%] md:translate-y-[-50%] top-0 md:top-1/2 md:left-1/2"}>
           <div className='flex justify-between'>
             <h1 className="font-bold text-2xl text-orange-400 mb-2">Add Product</h1>
             <span onClick={() => setDisplay(false)} className="md:hidden cursor-pointer font-bold text-red-400">x</span>
