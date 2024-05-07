@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const res: OrderPayload = await request.json()
   if (res.order_items.length === 0) {
-    return new Response("Order Items Cant be empty!", { status: 400 })
+    throw new Error("Order Items Cant be empty!");
   }
   let sums = 0
   try {
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
       }))
     sums -= res.discount
     if (sums < 0) {
-      return new Response("Invalid Order", { status: 400 })
+      throw new Error("Invalid Order")
     }
 
     const data = await prisma.order.create({

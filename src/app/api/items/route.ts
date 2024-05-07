@@ -20,11 +20,11 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const res = await request.json()
   if (!res.name) {
-    return new Response("Item Name Cant be empty!", { status: 400 })
+    throw new Error("Item Name Cant Be Empty");
   }
   const exist = await prisma.item.findFirst({ where: { name: res.name, is_deleted: false } })
   if (exist) {
-    return new Response("Item Name is already exist", { status: 400 })
+    throw new Error("Item Name Is already exist");
   }
   const data = await prisma.item.create({
     data: {
